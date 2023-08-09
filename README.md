@@ -56,9 +56,6 @@ To conquer this project, you need to ace the following criteria:
 - Unleash service workers to cache and summon assets promptly.
 - Crown your creation by allowing users to claim it as a desktop app.
 
-## Mock-Up 🎥
-
-![Application Demo](insert_link_here) *Replace with an actual link to your application demo.*
 
 ## Installation 🛠️
 
