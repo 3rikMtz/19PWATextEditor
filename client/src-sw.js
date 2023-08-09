@@ -1,15 +1,12 @@
-//import workbox modules 
-const { warmStrategyCache } = require('workbox-recipes');
+const { offlineFallback, warmStrategyCache } = require('workbox-recipes');
 const { CacheFirst, StaleWhileRevalidate } = require('workbox-strategies');
 const { registerRoute } = require('workbox-routing');
 const { CacheableResponsePlugin } = require('workbox-cacheable-response');
 const { ExpirationPlugin } = require('workbox-expiration');
 const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
 
-//this line precache all the assets specified in the WB_MANIFEST, this assets will be automatically cached in the services worker 
 precacheAndRoute(self.__WB_MANIFEST);
 
-//page cache strategy
 const pageCache = new CacheFirst({
   cacheName: 'page-cache',
   plugins: [
@@ -22,7 +19,6 @@ const pageCache = new CacheFirst({
   ],
 });
 
-//
 warmStrategyCache({
   urls: ['/index.html', '/'],
   strategy: pageCache,
@@ -30,13 +26,15 @@ warmStrategyCache({
 
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
-// TODO: Implement asset caching
-//this lines register a route handle caching for assets, such as styles, scripts and worker
+// Set up asset cache
 registerRoute(
+  // Here we define the callback function that will filter the requests we want to cache (in this case, JS and CSS files)
   ({ request }) => ['style', 'script', 'worker'].includes(request.destination),
   new StaleWhileRevalidate({
+    // Name of the cache storage.
     cacheName: 'asset-cache',
     plugins: [
+      // This plugin will cache responses with these headers to a maximum-age of 30 days
       new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
